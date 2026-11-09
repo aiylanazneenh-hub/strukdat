@@ -130,3 +130,60 @@ void bacaTeks(const char *prompt, char *hasil, int maksPanjang) {
         cin.ignore(1000, '\n');
     }
 }
+
+char hurufKecil(char c) {
+    if (c >= 'A' && c <= 'Z') return c + 32;
+    return c;
+}
+bool mengandung(const char *teks, const char *kata) {
+    int n = panjang(teks);
+    int m = panjang(kata);
+    for (int i = 0; i + m <= n; i++) {
+        int j = 0;
+        while (j < m && hurufKecil(teks[i + j]) == hurufKecil(kata[j])) j++;
+        if (j == m) return true;
+    }
+    return false;
+}
+void cariJudul() {
+    char kata[50];
+    bacaTeks("Masukkan judul: ", kata, 50);
+    bool ketemu = false;
+    for (int i = 0; i < jumlah; i++) {
+        if (mengandung(buku[i].judul, kata)) {
+            if (!ketemu) cetakHeader();
+            cetakBuku(buku[i]);
+            ketemu = true;
+        }
+    }
+    if (!ketemu) cout << "Buku tidak ditemukan.\n";
+}
+
+void cariPengarang() {
+    char kata[50];
+    bacaTeks("Masukkan pengarang: ", kata, 50);
+    bool ketemu = false;
+    for (int i = 0; i < jumlah; i++) {
+        if (mengandung(buku[i].pengarang, kata)) {
+            if (!ketemu) cetakHeader();
+            cetakBuku(buku[i]);
+            ketemu = true;
+        }
+    }
+    if (!ketemu) cout << "Buku tidak ditemukan.\n";
+}
+
+void menuSearching() {
+    int pilih;
+    do {
+        cout << "\n=== MENU PENCARIAN ===\n";
+        cout << "1. Cari berdasarkan Judul\n";
+        cout << "2. Cari berdasarkan Pengarang\n";
+        cout << "0. Kembali\n";
+        pilih = bacaInt("Pilih: ");
+
+        if (pilih == 1) cariJudul();
+        else if (pilih == 2) cariPengarang();
+        else if (pilih != 0) cout << "Pilihan tidak valid.\n";
+    } while (pilih != 0);
+}
