@@ -196,6 +196,7 @@ char hurufKecil(char c) {
     if (c >= 'A' && c <= 'Z') return c + 32;
     return c;
 }
+
 bool mengandung(const char *teks, const char *kata) {
     int n = panjang(teks);
     int m = panjang(kata);
@@ -206,6 +207,7 @@ bool mengandung(const char *teks, const char *kata) {
     }
     return false;
 }
+
 void cariJudul() {
     char kata[50];
     bacaTeks("Masukkan judul: ", kata, 50);
@@ -234,7 +236,6 @@ void cariPengarang() {
     if (!ketemu) cout << "Buku tidak ditemukan.\n";
 }
 
-// ---- SORTING
 void menuSearching() {
     int pilih;
     do {
@@ -250,4 +251,3 @@ void menuSearching() {
     } while (pilih != 0);
 }
 
-// ---- END SORTING
