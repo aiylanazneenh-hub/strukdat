@@ -251,3 +251,202 @@ void menuSearching() {
     } while (pilih != 0);
 }
 
+// ---- GRAPH
+struct Edge {
+    int tujuan;   
+    int bobot;    
+};
+ 
+class GrafBuku {
+private:
+    Buku simpul[MAX];      
+    int  jumlahSimpul;
+    Edge adj[MAX][MAX];      
+    int  derajat[MAX];    
+ 
+    bool samaTeks(const char *a, const char *b) const {
+        int n = panjang(a);
+        if (n != panjang(b)) return false;
+        for (int i = 0; i < n; i++)
+            if (hurufKecil(a[i]) != hurufKecil(b[i])) return false;
+        return true;
+    }
+ 
+    int hitungBobot(const Buku &a, const Buku &b) const {
+        int skor = 0;
+        if (samaTeks(a.kategori,  b.kategori))  skor += 2;
+        if (samaTeks(a.pengarang, b.pengarang)) skor += 1;
+        return skor;
+    }
+ 
+    void tambahEdge(int dari, int ke, int bobot) {
+        adj[dari][derajat[dari]].tujuan = ke;
+        adj[dari][derajat[dari]].bobot  = bobot;
+        derajat[dari]++;
+    }
+ 
+    void urutkanTetangga(int v) {
+        for (int i = 1; i < derajat[v]; i++) {
+            Edge kunci = adj[v][i];
+            int j = i - 1;
+            while (j >= 0 && adj[v][j].bobot < kunci.bobot) {
+                adj[v][j + 1] = adj[v][j];
+                j--;
+            }
+            adj[v][j + 1] = kunci;
+        }
+    }
+ 
+public:
+    GrafBuku() : jumlahSimpul(0) {
+        for (int i = 0; i < MAX; i++) derajat[i] = 0;
+    }
+ 
+    int banyakSimpul() const { return jumlahSimpul; }
+ 
+    int tambahBuku(const Buku &b) {
+        if (jumlahSimpul >= MAX) return -1;
+        simpul[jumlahSimpul] = b;
+        derajat[jumlahSimpul] = 0;
+        return jumlahSimpul++;
+    }
+ 
+    void bangunEdge() {
+        for (int i = 0; i < jumlahSimpul; i++) derajat[i] = 0;
+ 
+        for (int i = 0; i < jumlahSimpul; i++) {
+            for (int j = i + 1; j < jumlahSimpul; j++) {
+                int w = hitungBobot(simpul[i], simpul[j]);
+                if (w > 0) {
+                    tambahEdge(i, j, w);
+                    tambahEdge(j, i, w);
+                }
+            }
+        }
+        for (int i = 0; i < jumlahSimpul; i++) urutkanTetangga(i);
+    }
+ 
+    int cariIndeksById(int id) const {
+        for (int i = 0; i < jumlahSimpul; i++)
+            if (simpul[i].id == id) return i;
+        return -1;
+    }
+ 
+    void tampilkanGraf() const {
+        cout << "\n=== GRAF BUKU (Adjacency List) ===\n";
+        int totalEdge = 0;
+        for (int i = 0; i < jumlahSimpul; i++) {
+            cout << "[" << simpul[i].id << "] " << simpul[i].judul << " -> ";
+            if (derajat[i] == 0) {
+                cout << "(tidak punya hubungan)";
+            } else {
+                for (int k = 0; k < derajat[i]; k++) {
+                    const Buku &t = simpul[adj[i][k].tujuan];
+                    cout << "[" << t.id << "] (bobot " << adj[i][k].bobot << ")";
+                    if (k < derajat[i] - 1) cout << ", ";
+                }
+            }
+            cout << "\n";
+            totalEdge += derajat[i];
+        }
+        cout << "Jumlah simpul: " << jumlahSimpul
+             << ", jumlah edge: " << totalEdge / 2 << "\n";
+    }
+ 
+    int rekomendasi(int idAsal, int maks) const {
+        int awal = cariIndeksById(idAsal);
+        if (awal == -1) {
+            cout << "Buku dengan ID " << idAsal << " tidak ditemukan.\n";
+            return 0;
+        }
+ 
+        int antrian[MAX];
+        int level[MAX];                
+        for (int i = 0; i < jumlahSimpul; i++) level[i] = -1;   
+ 
+        int depan = 0, belakang = 0;
+        antrian[belakang++] = awal;     
+        level[awal] = 0;
+ 
+        cout << "\nRekomendasi untuk: " << simpul[awal].judul << "\n";
+        int hasil = 0;
+ 
+        while (depan < belakang && hasil < maks) {
+            int u = antrian[depan++];   
+            if (u != awal) {
+                if (hasil == 0) {
+                    cetakTeksRata("ID", 4);
+                    cetakTeksRata("Judul", 32);
+                    cetakTeksRata("Kategori", 12);
+                    cout << "Jarak\n";
+                    for (int i = 0; i < 55; i++) cout << '-';
+                    cout << "\n";
+                }
+                cetakAngkaRata(simpul[u].id, 4);
+                cetakTeksRata(simpul[u].judul, 32);
+                cetakTeksRata(simpul[u].kategori, 12);
+                cout << level[u] << " langkah\n";
+                hasil++;
+            }
+            for (int k = 0; k < derajat[u]; k++) {
+                int v = adj[u][k].tujuan;
+                if (level[v] == -1) {   
+                    level[v] = level[u] + 1;
+                    antrian[belakang++] = v;
+                }
+            }
+        }
+        if (hasil == 0) cout << "Tidak ada buku sejenis.\n";
+        return hasil;
+    }
+};
+ 
+GrafBuku graf;   
+ 
+void siapkanGraf() {
+    for (int i = 0; i < jumlah; i++) graf.tambahBuku(buku[i]);
+    graf.bangunEdge();
+}
+ 
+void menuGraf() {
+    int pilih;
+    do {
+        cout << "\n=== MENU GRAF & REKOMENDASI (BFS) ===\n";
+        cout << "1. Tampilkan graf buku\n";
+        cout << "2. Rekomendasi buku sejenis\n";
+        cout << "0. Kembali\n";
+        pilih = bacaInt("Pilih: ");
+ 
+        if (pilih == 1) {
+            graf.tampilkanGraf();
+        } else if (pilih == 2) {
+            int id = bacaInt("Masukkan ID buku: ");
+            graf.rekomendasi(id, 5);
+        } else if (pilih != 0) {
+            cout << "Pilihan tidak valid.\n";
+        }
+    } while (pilih != 0);
+}
+// ---- END GRAPH
+ 
+int main() {
+    isiDataAwal();
+    siapkanGraf();   
+ 
+    int pilih;
+    do {
+        cout << "\n=== PERPUSTAKAAN DIGITAL ===\n";
+        cout << "1. Pengurutan\n";
+        cout << "2. Pencarian\n";
+        cout << "3. Graf & Rekomendasi\n";
+        cout << "0. Keluar\n";
+        pilih = bacaInt("Pilih: ");
+ 
+        if (pilih == 1) menuSorting();
+        else if (pilih == 2) menuSearching();
+        else if (pilih == 3) menuGraf();
+        else if (pilih != 0) cout << "Pilihan tidak valid.\n";
+    } while (pilih != 0);
+ 
+    return 0;
+}
