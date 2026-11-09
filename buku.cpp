@@ -131,6 +131,67 @@ void bacaTeks(const char *prompt, char *hasil, int maksPanjang) {
     }
 }
 
+// ---- SORTING 
+bool tahunNaik(const Buku &a, const Buku &b)    { return a.tahun < b.tahun; }
+bool tahunTurun(const Buku &a, const Buku &b)   { return a.tahun > b.tahun; }
+bool ratingNaik(const Buku &a, const Buku &b)   { return a.rating < b.rating; }
+bool ratingTurun(const Buku &a, const Buku &b)  { return a.rating > b.rating; }
+bool idNaik(const Buku &a, const Buku &b)       { return a.id < b.id; }
+
+
+Buku bantu[MAX];  
+
+void gabung(int kiri, int tengah, int kanan,
+            bool (*lebihDulu)(const Buku &, const Buku &)) {
+    int i = kiri, j = tengah + 1, k = kiri;
+    while (i <= tengah && j <= kanan) {
+        if (lebihDulu(buku[j], buku[i])) bantu[k++] = buku[j++];
+        else                             bantu[k++] = buku[i++];
+    }
+    while (i <= tengah) bantu[k++] = buku[i++];
+    while (j <= kanan)  bantu[k++] = buku[j++];
+    for (k = kiri; k <= kanan; k++) buku[k] = bantu[k];
+}
+
+void mergeSort(int kiri, int kanan,
+               bool (*lebihDulu)(const Buku &, const Buku &)) {
+    if (kiri >= kanan) return;
+    int tengah = (kiri + kanan) / 2;
+    mergeSort(kiri, tengah, lebihDulu);
+    mergeSort(tengah + 1, kanan, lebihDulu);
+    gabung(kiri, tengah, kanan, lebihDulu);
+}
+
+void menuSorting() {
+    int pilih;
+    do {
+        cout << "\n=== MENU PENGURUTAN (Merge Sort) ===\n";
+        cout << "1. Tahun terbit (terlama -> terbaru)\n";
+        cout << "2. Tahun terbit (terbaru -> terlama)\n";
+        cout << "3. Rating (terendah -> tertinggi)\n";
+        cout << "4. Rating (tertinggi -> terendah)\n";
+        cout << "0. Kembali\n";
+        pilih = bacaInt("Pilih: ");
+        if (pilih == 0) break;
+        if (pilih < 1 || pilih > 4) {
+            cout << "Pilihan tidak valid.\n";
+            continue;
+        }
+
+        bool (*cmp)(const Buku &, const Buku &) = tahunNaik;
+        if (pilih == 2) cmp = tahunTurun;
+        else if (pilih == 3) cmp = ratingNaik;
+        else if (pilih == 4) cmp = ratingTurun;
+
+        mergeSort(0, jumlah - 1, cmp);
+
+        cout << "\nHasil pengurutan:\n";
+        cetakDaftar(buku, jumlah);
+    } while (pilih != 0);
+}
+
+// ---- END SORTING
+
 char hurufKecil(char c) {
     if (c >= 'A' && c <= 'Z') return c + 32;
     return c;
@@ -173,6 +234,7 @@ void cariPengarang() {
     if (!ketemu) cout << "Buku tidak ditemukan.\n";
 }
 
+// ---- SORTING
 void menuSearching() {
     int pilih;
     do {
@@ -187,3 +249,5 @@ void menuSearching() {
         else if (pilih != 0) cout << "Pilihan tidak valid.\n";
     } while (pilih != 0);
 }
+
+// ---- END SORTING
