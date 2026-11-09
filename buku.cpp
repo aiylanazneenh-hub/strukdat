@@ -131,6 +131,16 @@ void bacaTeks(const char *prompt, char *hasil, int maksPanjang) {
     }
 }
 
+void tampilkanSemua() {
+    cout << "\n=== DAFTAR SEMUA BUKU ===\n";
+    if (jumlah == 0) {
+        cout << "Belum ada data buku.\n";
+        return;
+    }
+    cetakDaftar(buku, jumlah);
+    cout << "Total: " << jumlah << " buku\n";
+}
+
 // ---- SORTING 
 bool tahunNaik(const Buku &a, const Buku &b)    { return a.tahun < b.tahun; }
 bool tahunTurun(const Buku &a, const Buku &b)   { return a.tahun > b.tahun; }
@@ -431,21 +441,32 @@ void menuGraf() {
  
 int main() {
     isiDataAwal();
-    siapkanGraf();   
+    siapkanGraf();
  
     int pilih;
     do {
-        cout << "\n=== PERPUSTAKAAN DIGITAL ===\n";
-        cout << "1. Pengurutan\n";
-        cout << "2. Pencarian\n";
-        cout << "3. Graf & Rekomendasi\n";
-        cout << "0. Keluar\n";
+        cout << "\n=== PERPUSTAKAAN DIGITAL ===\n"
+             << "1. Tampilkan semua buku\n"
+             << "2. Urutkan buku\n"
+             << "3. Cari buku (judul / pengarang)\n"
+             << "4. Cari judul persis (Binary Search)\n"
+             << "5. Rekomendasi buku sejenis (BFS)\n"
+             << "6. Tampilkan graf hubungan antar buku\n"
+             << "7. Tambah buku baru\n"
+             << "0. Keluar\n";
         pilih = bacaInt("Pilih: ");
  
-        if (pilih == 1) menuSorting();
-        else if (pilih == 2) menuSearching();
-        else if (pilih == 3) menuGraf();
-        else if (pilih != 0) cout << "Pilihan tidak valid.\n";
+        switch (pilih) {
+            case 1: tampilkanSemua(); break;
+            case 2: menuSorting();    break;
+            case 3: /* TODO teman: cariJudul / cariPengarang (fungsi sudah ada di atas) */ break;
+            case 4: /* TODO teman: binary search */            break;
+            case 5: /* TODO teman: graf.rekomendasi(id, 5) */  break;
+            case 6: /* TODO teman: graf.tampilkanGraf() */     break;
+            case 7: /* TODO teman: tambah buku baru */         break;
+            case 0: cout << "Terima kasih!\n";                 break;
+            default: cout << "Pilihan tidak valid.\n";
+        }
     } while (pilih != 0);
  
     return 0;
