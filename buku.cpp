@@ -55,33 +55,6 @@ void isiDataAwal() {
     tambahData(11, "Sejarah Nusantara",         "Slamet Muljana",    "Sejarah",   2008, 4.2);
 }
  
-
-void inputBukuBaru() {
-    cout << "\n=== TAMBAH BUKU BARU ===\n";
-    if (jumlah >= MAX) {
-        cout << "Kapasitas penyimpanan penuh!\n";
-        return;
-    }
-
-    int id = bacaInt("Masukkan ID Buku: ");
-    char judul[50], pengarang[30], kategori[20];
-    
-    bacaTeks("Masukkan Judul Buku: ", judul, 50);
-    bacaTeks("Masukkan Pengarang: ", pengarang, 30);
-    bacaTeks("Masukkan Kategori: ", kategori, 20);
-    
-    int tahun = bacaInt("Masukkan Tahun Terbit: ");
-    
-    double rating;
-    cout << "Masukkan Rating (misal 4.5): ";
-    cin >> rating;
-    cin.ignore(1000, '\n');
-
-    tambahData(id, judul, pengarang, kategori, tahun, rating);
-    siapkanGraf(); // Re-build graf agar buku baru terhubung
-    cout << "Buku berhasil ditambahkan!\n";
-}
-
 void cetakTeksRata(const char *s, int lebar) {
     cout << s;
     int n = panjang(s);
@@ -466,6 +439,31 @@ void menuGraf() {
 }
 // ---- END GRAPH
  
+void inputBukuBaru() {
+    cout << "\n=== TAMBAH BUKU BARU ===\n";
+    if (jumlah >= MAX) {
+        cout << "Kapasitas penyimpanan penuh!\n";
+        return;
+    }
+
+    int id = bacaInt("Masukkan ID Buku: ");
+    char judul[50], pengarang[30], kategori[20];
+    
+    bacaTeks("Masukkan Judul Buku: ", judul, 50);
+    bacaTeks("Masukkan Pengarang: ", pengarang, 30);
+    bacaTeks("Masukkan Kategori: ", kategori, 20);
+    
+    int tahun = bacaInt("Masukkan Tahun Terbit: ");
+    
+    double rating;
+    cout << "Masukkan Rating (misal 4.5): ";
+    cin >> rating;
+    cin.ignore(1000, '\n');
+
+    tambahData(id, judul, pengarang, kategori, tahun, rating);
+    siapkanGraf(); // Re-build graf agar buku baru terhubung
+    cout << "Buku berhasil ditambahkan!\n";
+}
 
 int main() {
     isiDataAwal();
@@ -494,8 +492,8 @@ int main() {
             case 6: inputBukuBaru(); break;
             case 0: cout << "Terima kasih!\n"; break;
             default: cout << "Pilihan tidak valid.\n";}
-        
-        while (pilih != 0);
- 
-    return 0;}
+        }
+     while (pilih != 0);
+
+     return 0;
 }
