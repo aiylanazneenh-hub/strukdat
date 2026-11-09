@@ -449,24 +449,24 @@ int main() {
              << "1. Tampilkan semua buku\n"
              << "2. Urutkan buku\n"
              << "3. Cari buku (judul / pengarang)\n"
-             << "4. Cari judul persis (Binary Search)\n"
-             << "5. Rekomendasi buku sejenis (BFS)\n"
-             << "6. Tampilkan graf hubungan antar buku\n"
-             << "7. Tambah buku baru\n"
+             << "4. Rekomendasi buku sejenis (BFS)\n"
+             << "5. Tampilkan graf hubungan antar buku\n"
+             << "6. Tambah buku baru\n"
              << "0. Keluar\n";
         pilih = bacaInt("Pilih: ");
  
         switch (pilih) {
             case 1: tampilkanSemua(); break;
-            case 2: menuSorting();    break;
-            case 3: /* TODO teman: cariJudul / cariPengarang (fungsi sudah ada di atas) */ break;
-            case 4: /* TODO teman: binary search */            break;
-            case 5: /* TODO teman: graf.rekomendasi(id, 5) */  break;
-            case 6: /* TODO teman: graf.tampilkanGraf() */     break;
-            case 7: /* TODO teman: tambah buku baru */         break;
-            case 0: cout << "Terima kasih!\n";                 break;
+            case 2: menuSorting(); break;
+            case 3: menuSearching(); break;
+            case 4: {
+                int id = bacaInt("Masukkan ID buku untuk rekomendasi: ");
+                graf.rekomendasi(id, 5); break;}
+            case 5: graf.tampilkanGraf(); break;
+            case 6: tambahData; break;
+            case 0: cout << "Terima kasih!\n"; break;
             default: cout << "Pilihan tidak valid.\n";
-        }
+        
     } while (pilih != 0);
  
     return 0;
